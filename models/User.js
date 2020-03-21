@@ -1,9 +1,12 @@
-let User = function(data) {
-    this.data = data
-}
+class User {
 
-User.prototype.register = function() {
+    constructor(data) {
+        this.data = data
+    }
 
+    register = function() {
+
+    }
 }
 
 module.exports = User

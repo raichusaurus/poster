@@ -15,29 +15,40 @@ class User {
     }
 
     validate() {
+        this.validateUsername()
+        this.validateEmail()
+        this.validatePassword()
+    }
+
+    validateUsername() {
         if (this.data.username == "") {
             this.errors.push("You must provide a username.")
         }
         if (this.data.username != "" && !validator.isAlphanumeric(this.data.username)) {
             this.errors.push("Username can only contain letters and numbers")
         }
-        if (this.data.username.length > 0 && this.data.username.length < 3) {
-            this.errors.push("Username must be at least 3characters.")
-        }
-        if (this.data.username.length > 30) {
-            this.errors.push("Username cannot exceed 100 characters.")
-        }
+        this.validateLength(this.data.username, 3, 30, 'Username')
+    }
+
+    validateEmail() {
         if (!validator.isEmail(this.data.email)) {
             this.errors.push("You must provide a valid email address.")
         }
+    }
+
+    validatePassword() {
         if (this.data.password == "") {
             this.errors.push("You must provide a password.")
         }
-        if (this.data.password.length > 0 && this.data.password < 12) {
-            this.errors.push("Password must be at least 12 characters.")
+        this.validateLength(this.data.password, 12, 100, 'Password')
+    }
+
+    validateLength(value, min, max, name) {
+        if (value.length < min) {
+            this.errors.push(`${name} must be at least ${min} characters.`)
         }
-        if (this.data.password.length > 100) {
-            this.errors.push("Password cannot exceed 100 characters.")
+        if (value.length > max) {
+            this.errors.push(`${name} cannot exceed ${max} characters.`)
         }
     }
 }

@@ -22,21 +22,10 @@ class User {
     }
 
     cleanUp() {
-        if (typeof(this.data.username) != "string") {
-            this.data.username = ""
-        }
-        if (typeof(this.data.email) != "string") {
-            this.data.email = ""
-        }
-        if (typeof(this.data.password) != "string") {
-            this.data.password = ""
-        }
-
-        this.data = {
-            username: this.data.username.trim().toLowerCase(),
-            email: this.data.email.trim().toLowerCase(),
-            password: this.data.password
-        }
+        this.data.username = this.ensureElementIsString(this.data.username)
+        this.data.email = this.ensureElementIsString(this.data.email)
+        this.data.password = this.ensureElementIsString(this.data.password)
+        this.cleanBogusParameters()
     }
 
     validateUsername() {
@@ -69,6 +58,21 @@ class User {
         if (value.length > max) {
             this.errors.push(`${name} cannot exceed ${max} characters.`)
         }
+    }
+
+    cleanBogusParameters() {
+        this.data = {
+            username: this.data.username.trim().toLowerCase(),
+            email: this.data.email.trim().toLowerCase(),
+            password: this.data.password
+        }
+    }
+
+    ensureElementIsString(element) {
+        if (typeof (element) != "string") {
+            return ""
+        }
+        return element
     }
 }
 

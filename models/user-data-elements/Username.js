@@ -12,7 +12,7 @@ class Username extends UserDataElement {
         this.ensureElementIsString()
         this.checkForEmptyString()
         this.checkIsAlphaNumeric()
-        this.validateLength(3, 30,)
+        this.validateLength(3, 30)
         this.trimAndLowerCase()
     }
 }

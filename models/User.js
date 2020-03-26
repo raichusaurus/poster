@@ -1,6 +1,8 @@
-const Username = require('./user-data/Username')
-const Email = require('./user-data/Email')
-const Password = require('./user-data/Password')
+const usersCollection = require('../db').collection('users')
+
+const Username = require('./user-data-elements/Username')
+const Email = require('./user-data-elements/Email')
+const Password = require('./user-data-elements/Password')
 
 class User {
 
@@ -10,17 +12,23 @@ class User {
     }
 
     register() {
-        this.data = {
-            username: new Username(this.data.username),
-            email: new Email(this.data.email),
-            password: new Password(this.data.password)
+        this.cleanData()
+        if (!this.errors.length) {
+            usersCollection.insertOne(this.data)
         }
-        this.errors = this.data.username.getErrors()
-            .concat(this.data.email.getErrors())
-            .concat(this.data.password.getErrors())
+    }
 
-        // only if there are no validation errors
-        // then save the user dat a into a database
+    cleanData() {
+        this.data = {
+            username: this.getElementValueAndAddErrors(new Username(this.data.username)),
+            email: this.getElementValueAndAddErrors(new Email(this.data.email)),
+            password: this.getElementValueAndAddErrors(new Password(this.data.password))
+        }
+    }
+
+    getElementValueAndAddErrors(userDataElement) {
+        this.errors = this.errors.concat(userDataElement.getErrors())
+        return userDataElement.value
     }
 }
 

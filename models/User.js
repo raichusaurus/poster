@@ -19,16 +19,18 @@ class User {
     }
 
     cleanData() {
-        this.data = {
-            username: this.getElementValueAndAddErrors(new Username(this.data.username)),
-            email: this.getElementValueAndAddErrors(new Email(this.data.email)),
-            password: this.getElementValueAndAddErrors(new Password(this.data.password))
-        }
+        this.addUserElementsAndErrors(
+            new Username(this.data.username),
+            new Email(this.data.email),
+            new Password(this.data.password))
     }
 
-    getElementValueAndAddErrors(userDataElement) {
-        this.errors = this.errors.concat(userDataElement.getErrors())
-        return userDataElement.value
+    addUserElementsAndErrors(...userDataElements) {
+        this.data = {}
+        userDataElements.forEach((userDataElement) => {
+            this.errors = this.errors.concat(userDataElement.errors)
+            this.data[userDataElement.name] = userDataElement.value
+        })
     }
 }
 

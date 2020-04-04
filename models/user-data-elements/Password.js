@@ -3,8 +3,7 @@ const UserDataElement = require('./UserDataElement')
 class Password extends UserDataElement {
 
     constructor(value) {
-        super(value)
-        this.name = 'password'
+        super('password', value)
         this.validate()
     }
 

@@ -1,5 +1,7 @@
 const usersCollection = require('../db').collection('users')
 
+const UserDataElementFactory = require('./user-data-elements/UserDataElementFactory')
+
 const Username = require('./user-data-elements/Username')
 const Email = require('./user-data-elements/Email')
 const Password = require('./user-data-elements/Password')
@@ -12,17 +14,31 @@ class User {
     }
 
     register() {
-        this.cleanData()
+        this.cleanData('username', 'email', 'password')
         if (!this.errors.length) {
             usersCollection.insertOne(this.data)
         }
     }
 
-    cleanData() {
-        this.addUserElementsAndErrors(
-            new Username(this.data.username),
-            new Email(this.data.email),
-            new Password(this.data.password))
+    login(callback) {
+        this.cleanData('username', 'password')
+        usersCollection.findOne({username: this.data.username}, (err, attemptedUser) => {
+            if (attemptedUser && attemptedUser.password == this.data.password) {
+                callback('Congrats!')
+            }
+            else {
+                callback('Invalid username/password')
+            }
+        })
+    }
+
+    cleanData(...elementNames) {
+        let userDataElements = []
+        let userDataElementFactory = new UserDataElementFactory()
+        elementNames.forEach((elementName) => {
+            userDataElements.push(userDataElementFactory.createUserDataElement(elementName, this.data[elementName]))
+        })
+        this.addUserElementsAndErrors(...userDataElements)
     }
 
     addUserElementsAndErrors(...userDataElements) {

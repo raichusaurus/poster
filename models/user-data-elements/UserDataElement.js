@@ -2,9 +2,9 @@ const validator = require('validator')
 
 class UserDataElement {
 
-    constructor(value) {
+    constructor(name, value) {
+        this.name = name
         this.value = value
-        this.name = ""
         this.errors = []
     }
 

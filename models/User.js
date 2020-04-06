@@ -2,10 +2,6 @@ const usersCollection = require('../db').collection('users')
 
 const UserDataElementFactory = require('./user-data-elements/UserDataElementFactory')
 
-const Username = require('./user-data-elements/Username')
-const Email = require('./user-data-elements/Email')
-const Password = require('./user-data-elements/Password')
-
 class User {
 
     constructor(data) {
@@ -22,14 +18,21 @@ class User {
 
     login(callback) {
         this.cleanData('username', 'password')
+        this.findUser(callback)
+    }
+
+    findUser(callback) {
         usersCollection.findOne({username: this.data.username}, (err, attemptedUser) => {
-            if (attemptedUser && attemptedUser.password == this.data.password) {
-                callback('Congrats!')
-            }
-            else {
-                callback('Invalid username/password')
-            }
+            this.onFindUser(attemptedUser, callback)
         })
+    }
+
+    onFindUser(attemptedUser, callback) {
+        if (attemptedUser && attemptedUser.password == this.data.password) {
+            callback('Congrats!')
+        } else {
+            callback('Invalid username/password')
+        }
     }
 
     cleanData(...elementNames) {
@@ -43,10 +46,12 @@ class User {
 
     addUserElementsAndErrors(...userDataElements) {
         this.data = {}
-        userDataElements.forEach((userDataElement) => {
-            this.errors = this.errors.concat(userDataElement.errors)
-            this.data[userDataElement.name] = userDataElement.value
-        })
+        userDataElements.forEach((userDataElement) => this.addUserElementAndErrors(userDataElement))
+    }
+
+    addUserElementAndErrors(userDataElement) {
+        this.errors = this.errors.concat(userDataElement.errors)
+        this.data[userDataElement.name] = userDataElement.value
     }
 }
 

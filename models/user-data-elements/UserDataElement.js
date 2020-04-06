@@ -38,10 +38,6 @@ class UserDataElement {
             this.errors.push(`${this.name} can only contain letters and numbers`)
         }
     }
-
-    getErrors() {
-        return this.errors
-    }
 }
 
 module.exports = UserDataElement

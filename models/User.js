@@ -16,23 +16,29 @@ class User {
         }
     }
 
-    login(callback) {
+    login() {
         this.cleanData('username', 'password')
-        this.findUser(callback)
+        return this.findUserInDB()
     }
 
-    findUser(callback) {
-        usersCollection.findOne({username: this.data.username}, (err, attemptedUser) => {
-            this.onFindUser(attemptedUser, callback)
+    findUserInDB() {
+        // probably use async await eventually
+        return new Promise((resolve, reject) => {
+            usersCollection.findOne({username: this.data.username})
+                .then(attemptedUser => {
+                    if (this.isValidUserNamePassword(attemptedUser)) {
+                        resolve('Congrats')
+                    }
+                    else {
+                        reject("Invalid username/password")
+                    }
+                })
+                .catch(e => reject("Please try again later"))
         })
     }
 
-    onFindUser(attemptedUser, callback) {
-        if (attemptedUser && attemptedUser.password == this.data.password) {
-            callback('Congrats!')
-        } else {
-            callback('Invalid username/password')
-        }
+    isValidUserNamePassword(attemptedUser) {
+        return (attemptedUser && attemptedUser.password == this.data.password)
     }
 
     cleanData(...elementNames) {
